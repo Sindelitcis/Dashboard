@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Dashboard</title>
+  <meta charset="utf-8" />
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link href="style.css" type="text/css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet" />
+
+
+  <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+  <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+  <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+
+<body>
+
+  <div class="top-fixo">
+    <div id="services"></div>
+    <div class="filtros">
+      <label for="tabulacao">Escolha um parametro:</label>
+      <select name="tabulacao" id="tabulacao">
+        <option value="">Não selecionado</option>
+        <option value="cpc">CPC</option>
+        <option value="cpca">CPCA</option>
+        <option value="alo">ALÔ</option>
+        <option value="pp">PP</option>
+        <option value="valor">Valor</option>
+      </select>
+
+      <label for="tipgr">Escolha o estilo do gráfico:</label>
+      <select name="tipgr" id="tipgr">
+        <option value="barra vertical">Barra Vertical</option>
+        <option value="barra horizontal">Barra Horizontal</option>
+        <option value="pizza">Pizza</option>
+        <option value="donut">Donut</option>
+        <option value="linha">Linha</option>
+      </select>
+
+      <label for="produto">Escolha um tipo de produto:</label>
+      <select name="produto" id="produto">
+        <option value="">Não selecionado</option>
+        <option value="WEB">WEB</option>
+        <option value="CONTROLE">CONTROLE</option>
+        <option value="POS_PURO">POS_PURO</option>
+        <option value="FIXO">FIXO</option>
+        <option value="WTTX">WTTX</option>
+        <option value="old">Old</option>
+        <option value="OUTROS">OUTROS</option>
+      </select>
+
+      <label for="data-start">Data inicial:</label>
+      <input type="date" id="data-start" name="data-start">
+
+      <label for="data-end">Data final:</label>
+      <input type="date" id="data-end" name="data-end">
+
+
+
+      <button id="att-filtros">Atualizar</button>
+
+      
+
+    </div>
+  </div>
+  <div class='graph-holder'>
+    <canvas id="myChart" style="width:100%;height:100%;"></canvas>
+  </div>
+  <div id="rodape">
+    <div class="rod-bloco">
+      <div class="rod-titulo">Desenvolvedores</div>
+      <div class="rod-itens">
+        <a href="https://www.facebook.com/rafael.probst.35/" title="rpm.socialgamers@gmail.com" target="_blank">Rafael
+          Probst</a>
+        <a href="https://www.facebook.com/guilherme.pontarolo" title="guipontarolo@gmail.com" target="_blank">Guilherme
+          Pontarolo</a>
+        <a href="https://github.com/mococa" title="luizfelipesmoureau@gmail.com" target="_blank">Luiz Felipe Moureau</a>
+      </div>
+    </div>
+    <div class="rod-bloco">
+      <img src="imagens/services.png" />
+      <div class="rod-titulo">Tecnologias</div>
+      <div class="rod-itens">
+        <a href="https://www.typescriptlang.org/" target="_blank">TypeScript</a>
+        <a href="https://nodejs.org/en/" target="_blank">NodeJs</a>
+        <a href="https://www.mysql.com/" target="_blank">SQL</a>
+        <a href="https://www.chartjs.org/" target="_blank">ChartJs</a>
+        <a href="https://dbeaver.io/" target="_blank">Dbeaver</a>
+        <a href="https://www.docker.com/" target="_blank">Docker</a>
+        <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript" target="_blanc">JavaScript</a>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+
+
+<script>
+  var chart;
+  function datalouca(str){
+    return str.split('-')[2]+"/"+str.split('-')[1]+"/"+str.split('-')[0]
+  }
+  const buttonAtt = document.getElementById('att-filtros')
+  buttonAtt.onclick=function(){
+    var objFiltros = {}
+    objFiltros.produto = document.getElementById('produto').value 
+    const startdate = datalouca(document.getElementById('data-start').value)
+    const enddate = datalouca(document.getElementById('data-end').value)
+    objFiltros.startDateFilter = startdate
+    objFiltros.endDateFilter = enddate
+
+    if(document.getElementById('tabulacao').value.length > 0){
+      createGraph("uf", document.getElementById('tabulacao').value, document.getElementById('tipgr').value, objFiltros)
+    } else{
+      alert("Selecione um parâmetro")
+    }
+    
+    //createGraph("uf", "pp", objFiltros)
+
+  }
+  //createGraph("uf", "pp", "barra vertical");
+
+  /*Pode usar os gráficos:
+      barra horizontal, barra vertical,
+      pizza, donut e
+      linha
+  */
+
+  function createGraph(eixoX, eixoY, grafico, filtros) {
+    var xhr = new XMLHttpRequest();
+    //filtros = { uf: 'AC', startDateFilter: '01/04/2019', endDateFilter: '04/04/2019', produto: 'CONTROLE' }
+    //filtros.startDateFilter = document.getElementById('id de um input').value
+    var jsonRes = {}
+    xhr.onload = function () {
+      jsonRes = JSON.parse(xhr.response);
+      //console.log(jsonRes)
+      Grafico(jsonRes)
+
+    };
+    xhr.open("POST", "http://localhost:3333/", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(filtros));
+
+
+    
+    function Grafico(json/*, eixoX, eixoY, grafico*/) {
+      var getRandomColor = function () {
+        return '#' + (Math.random().toString(16) + '0000000').slice(2, 8);
+      };
+      var datinha = []
+      for (var obj of json.base) {
+        var dat = {}
+        dat.data = obj.data
+        dat.uf = obj.uf
+        dat.estado = camel(obj.estado)
+        dat.pp = obj.pp
+        dat.produto = obj.produto
+        dat.alo = obj.alo
+        dat.cpc = obj.cpc
+        dat.cpca = obj.cpca
+        dat.valor = obj.valor
+        //chart.data.push(dat)
+        datinha.push(dat)
+      }
+      // analizar pp, alo, cpc e cpca a partir data (inicio e fim), uf, e produto
+
+      var dataFiltrada = [];
+      Array.from(new Set(datinha.map(x => x[eixoX]))).forEach(x => {
+        dataFiltrada.push(datinha.filter(y => y[eixoX] === x).reduce((output, item) => {
+          let val = output[x] === undefined ? 0 : output[x];
+          output[x] = (item[eixoY] + val);
+          return output;
+        }, {}));
+      })
+      // var novaData = []
+      var labelss = []
+      var valores = []
+      for (obj of dataFiltrada) {
+        if (Object.keys(obj) != "0" && Object.keys(obj) != "são paulo") {
+          var nobj = {}
+          nobj[eixoX] = Object.keys(obj)[0]
+          nobj[eixoY] = obj[Object.keys(obj)[0]]
+          labelss.push(Object.keys(obj))
+          valores.push(obj[Object.keys(obj)[0]])
+        }
+      }
+
+      var ctx = document.getElementById('myChart').getContext('2d');
+      if (chart != null) {
+        chart.destroy()
+      }
+
+      if (grafico == "barra vertical") {
+        chart = new Chart(ctx, {
+          type: 'bar',
+          responsive: true,
+          maintainAspectRatio: false,
+          data: {
+            labels: labelss,
+            datasets: [{
+              label: eixoY,
+              backgroundColor: new Array(labelss.length).fill([getRandomColor(), getRandomColor(), getRandomColor()]).flat(),
+              borderColor: 'rgb(255, 99, 132)',
+              data: valores
+            }]
+          },
+          options: {
+            scales: {
+              pointLabels:{
+                fontStyle: "bold"
+              },
+              yAxes: [{
+                display: true,
+                ticks: {
+                  suggestedMin: 0,    // minimum will be 0, unless there is a lower value.
+                  // OR //
+                  beginAtZero: true   // minimum value will be 0.
+                }
+              }]
+            }
+          }
+        })
+      } else if (grafico == "barra horizontal") {
+        chart = new Chart(ctx, {
+          type: 'horizontalBar',
+
+          data: {
+            labels: labelss,
+            datasets: [{
+              label: eixoY,
+              backgroundColor: new Array(labelss.length).fill([getRandomColor(), getRandomColor(), getRandomColor()]).flat(),
+              borderColor: 'rgb(255, 99, 132)',
+              data: valores
+            }]
+          },
+
+          // Configuration options go here
+          options: {
+            scales: {
+              xAxes: [{
+                display: true,
+                ticks: {
+                  suggestedMin: 0,    // minimum will be 0, unless there is a lower value.
+                  beginAtZero: true   // minimum value will be 0.
+                }
+              }]
+            }
+          }
+        })
+
+
+
+      } else
+        if (grafico == "pizza") {
+          //chart = null
+          chart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+              labels: labelss,
+              datasets: [{
+                label: eixoY,
+                backgroundColor: new Array(labelss.length).fill([getRandomColor(), getRandomColor(), getRandomColor()]).flat(),
+                borderColor: 'rgb(255, 99, 132)',
+                data: valores
+              }]
+            },
+
+            // Configuration options go here
+            options: {
+              scales: {
+                yAxes: [{
+                  display: true,
+                  ticks: {
+                    suggestedMin: 0,    // minimum will be 0, unless there is a lower value.
+                    // OR //
+                    beginAtZero: true   // minimum value will be 0.
+                  }
+                }]
+              }
+            }
+          });
+        } else
+          if (grafico == "linha") {
+            chart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: labelss,
+                datasets: [{
+                  label: eixoY,
+
+                  borderColor: '#337121',
+                  data: valores
+                }]
+              },
+
+              // Configuration options go here
+              options: {
+                scales: {
+                  yAxes: [{
+                    display: true,
+                    ticks: {
+                      suggestedMin: 0,    // minimum will be 0, unless there is a lower value.
+                      // OR //
+                      beginAtZero: true   // minimum value will be 0.
+                    }
+                  }]
+                }
+              }
+            })
+
+
+          } else
+            if (grafico == "donut") {
+              chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                  labels: labelss,
+                  datasets: [{
+                    label: eixoY,
+                    backgroundColor: new Array(labelss.length).fill([getRandomColor(), getRandomColor(), getRandomColor()]).flat(),
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: valores
+                  }]
+                },
+
+                // Configuration options go here
+                options: {
+                  scales: {
+                    yAxes: [{
+                      display: true,
+                      ticks: {
+                        suggestedMin: 0,    // minimum will be 0, unless there is a lower value.
+                        // OR //
+                        beginAtZero: true   // minimum value will be 0.
+                      }
+                    }]
+                  }
+                }
+              })
+
+
+            }
+    }
+
+
+
+  }
+  function camel(str) {
+    var es = []
+    for (palavra of str.split(" ")) {
+      palavra = palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase();
+      es.push(palavra)
+    }
+    return es.join(" ")
+  }
+</script>
+
+
+
+</html>

@@ -1,0 +1,65 @@
+yarn init -y -> primeiro comando, pra iniciar o yarn na pasta
+yarn add express -> pra instalar o express
+
+yarn add typescript -D -> instala o typescript
+
+yarn tsc --init -> gera o tsconfig.json
+
+cria a pasta src e nela o arquivo server.ts
+
+no tsconfig.json adiciona:
+"outDir":"./dist"
+"rootDir":"./src"
+
+yarn tsc -> converte o codigo pra javascript
+
+yarn add @types/express -D -> tira o erro q n conhece express
+
+instala json viewer -> extensão do google chrome
+
+PARA DESENVOLVIMENTO, AO INVES DE USAR O TSC E FAZER O BUILD TODA HORA, INSTALA (PARA DESENVOLVIMENTO):
+yarn add ts-node-dev -D
+
+adiciona no package.json
+"scripts": {
+    "build": "tsc",
+    "dev:server": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts"
+
+CONFIGURANDO O DOCKER
+
+docker run --name rafa_docker -e POSTGRES_PASSWORD=docker -p 5433:5432 -d postgres
+
+
+CONFIGURANDO O TYPEORM
+
+cria o arquivo ormconfig.json na raíz do projeto, define o tipo do bd
+
+yarn add typeorm pg -> instala o typeorm e o plugin do postgres
+
+define o resto das configurações
+
+cria os scripts no arquivo package.json
+
+yarn typeorm migration:create -n NOME_MIGRATION -> cria migration
+
+yarn typeorm migration:run -> executa a migration
+
+yarn typeorm migration:revert -> desfaz ultima migration
+
+
+ENTITIES
+
+importa entity do typeorm
+
+cria a classe da entidade e usa os @
+
+Descomenta as config do tsconfig:
+
+"experimentalDecorators": true,
+"emitDecoratorMetadata": true,
+
+Descomenta a linha seguinte e muda pra false:
+
+"strictPropertyInitialization": false
+
+

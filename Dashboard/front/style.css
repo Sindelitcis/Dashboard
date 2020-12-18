@@ -1,0 +1,146 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+html, body{
+    height: 100%;
+    /* background-image: url("./imagens/fundo.png"); */
+}
+
+a{
+    text-decoration: none;
+    color: #76b900;
+}
+
+#chartdiv{
+    width: 100%;
+    padding: 150px 0 0 0;
+    height: 300px;
+    position: relative;
+}
+
+#services{
+    max-width: 170px;
+    background-image: url("https://gruposervices.com.br/site/svg/logo.svg");
+    margin: 24px 17px;
+    min-height: 50px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 20px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    z-index: 10;
+}
+.graph-holder{
+    display:block;
+    height:100%;
+    /* bottom: 0; */
+    max-width:100%;
+    padding-top: 150px;
+    background-color: rgb(255, 255, 255);
+    /* overflow: auto; */
+    background-image: url(./imagens/fundo2.png);
+}
+
+.filtros{
+    line-height: 25px;
+    display: block;
+    background-color: rgba(82, 82, 82, 0.7);
+    height: 30px;
+    padding: 5px;
+    font-weight: bold;
+    font-family: 'Roboto', tahoma, Arial;
+    color:rgb(236, 235, 235);
+}
+
+.filtros select, input{
+    border: 1px solid#000000;
+    border-radius: 7px;
+    background: rgb(255, 255, 255);
+}
+
+.filtros button:hover{
+    cursor: pointer;
+    color: white;
+    transform: scale(1.1);
+    background-color: black;
+    border: none;
+}
+
+.filtros button{
+    border: none;
+    background-color: #FFF;
+    color: black;
+    padding: 5px;
+    margin-left: 5px;
+    transition: 0.2s;
+}
+
+#rodape{
+    max-width:100%;
+    
+    height: 330px;
+    /* margin-top:80px; */
+    /*top:4vh;*/
+    padding: 50px;
+    display:grid;
+    grid-template-columns: repeat(auto,1fr);
+    grid-template-rows: 1fr;
+    background-color: rgb(29, 28, 28);
+    /* position:absolute; */
+    right:0;
+    left:0;
+    bottom:0;
+    overflow:visible;
+    font-family: 'Arial';
+
+}
+.rod-bloco{
+    grid-row:1/2;
+    grid-column: auto;
+}
+.rod-titulo{
+    
+    font-size: 35px;
+    color:white;
+    font-weight:bold;
+    line-height:60px;
+    width:40%;
+    border-bottom:1px solid #FFF;
+}
+.rod-itens{
+    padding:18px;
+    font-size:24px;
+}
+.rod-itens a{
+    max-width: 250px;
+    display:block;
+    line-height: 36px;
+}
+
+.rod-itens a:hover{
+    color: #97eb08;
+}
+
+#rodape img{
+    width: calc(100% - 1%);
+    max-width: 250px;
+    opacity: 65%;
+    bottom: 5%;
+    right: 1%;
+    float:right;
+}
+
+#rodape img:hover{
+    opacity: 100%;
+}
+
+.top-fixo{
+    height: 100px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    box-shadow: 1px 1px 2px black, 0 0 25px rgb(151, 151, 151), 0 0 5px darkblue;
+}
